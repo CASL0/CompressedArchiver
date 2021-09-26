@@ -7,6 +7,7 @@
 #include "CompressedArchiver.h"
 #include "CompressedArchiverDlg.h"
 #include "afxdialogex.h"
+#include "CreateCarDialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -31,6 +32,7 @@ void CCompressedArchiverDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CCompressedArchiverDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_BUTTON_CREATE_CAR, &CCompressedArchiverDlg::OnBnClickedButtonCreateCar)
 END_MESSAGE_MAP()
 
 
@@ -45,7 +47,11 @@ BOOL CCompressedArchiverDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 大きいアイコンの設定
 	SetIcon(m_hIcon, FALSE);		// 小さいアイコンの設定
 
-	// TODO: 初期化をここに追加します。
+	CString loadStr;
+	(void)loadStr.LoadStringW(AFX_IDS_APP_TITLE);
+	SetWindowText(loadStr);
+	(void)loadStr.LoadStringW(IDS_BUTTON_CREATE_CAR);
+	GetDlgItem(IDC_BUTTON_CREATE_CAR)->SetWindowTextW(loadStr);
 
 	return TRUE;  // フォーカスをコントロールに設定した場合を除き、TRUE を返します。
 }
@@ -86,3 +92,10 @@ HCURSOR CCompressedArchiverDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+void CCompressedArchiverDlg::OnBnClickedButtonCreateCar()
+{
+	CreateCarDialog dlg(this);
+	(void)dlg.DoModal();
+}
