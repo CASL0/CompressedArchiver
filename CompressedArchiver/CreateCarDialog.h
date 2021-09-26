@@ -1,5 +1,5 @@
 ﻿#pragma once
-
+#include <string>
 
 // CreateCarDialog ダイアログ
 
@@ -23,7 +23,10 @@ protected:
 private:
 	BOOL OnInitDialog();
 	void SetupComboBox();
+	DWORD GetFileSizeAndLastWriteTime(const std::wstring& filePath, uint64_t& fileSize, std::wstring& lastWriteTime) const;
 
 	CListCtrl m_itemList;
 	CComboBox m_comboAlgorithms;
+public:
+	afx_msg void OnBnClickedButtonAddList();
 };

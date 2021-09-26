@@ -45,6 +45,7 @@ BOOL CreateCarDialog::OnInitDialog()
 	(void)resourceStr.LoadStringW(IDS_TITLE_CREATE_CAR);
 	SetWindowText(resourceStr);
 
+	(void)m_itemList.SetExtendedStyle(m_itemList.GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_HEADERDRAGDROP);
 	(void)resourceStr.LoadStringW(IDS_LIST_HEADER_NAME);
 	(void)m_itemList.InsertColumn(0, resourceStr, LVCFMT_LEFT, 300);
 
@@ -89,12 +90,65 @@ void CreateCarDialog::SetupComboBox()
 	(void)resourceStr.LoadStringW(IDS_COMBO_ALGORITHM_LZMS);
 	(void)m_comboAlgorithms.InsertString(idx++, resourceStr);
 
-	m_comboAlgorithms.SetCurSel(0);
+	(void)m_comboAlgorithms.SetCurSel(0);
 
 }
 
 BEGIN_MESSAGE_MAP(CreateCarDialog, CDialogEx)
+	ON_BN_CLICKED(IDC_BUTTON_ADD_LIST, &CreateCarDialog::OnBnClickedButtonAddList)
 END_MESSAGE_MAP()
 
 
 // CreateCarDialog メッセージ ハンドラー
+
+
+void CreateCarDialog::OnBnClickedButtonAddList()
+{
+	CFileDialog dlg(TRUE, nullptr, nullptr, OFN_FILEMUSTEXIST);
+	if (dlg.DoModal() == IDCANCEL)
+	{
+		return;
+	}
+
+	uint64_t fileSize = 0;
+	std::wstring lastWriteTime;
+	if (auto ret = GetFileSizeAndLastWriteTime(dlg.GetPathName().GetString(), fileSize, lastWriteTime); ret != ERROR_SUCCESS)
+	{
+		OutputDebugString(theApp.FormatErrorMessage(ret).c_str());
+		return;
+	}
+
+	auto numItems = m_itemList.GetItemCount();
+	(void)m_itemList.InsertItem(numItems, dlg.GetPathName().GetString());
+	auto colum = 1;
+	(void)m_itemList.SetItemText(numItems, colum++, std::to_wstring(fileSize).c_str());
+	(void)m_itemList.SetItemText(numItems, colum++, lastWriteTime.c_str());
+}
+
+DWORD CreateCarDialog::GetFileSizeAndLastWriteTime(const std::wstring& filePath, uint64_t& fileSize, std::wstring& lastWriteTime) const
+{
+	OutputDebugString(L"ファイル名: ");
+	OutputDebugString(filePath.c_str());
+	OutputDebugString(L"\n");
+	WIN32_FILE_ATTRIBUTE_DATA fileAttr = { 0 };
+	if (!GetFileAttributesEx(filePath.c_str(), GetFileExInfoStandard, &fileAttr))
+	{
+		OutputDebugString(L"GetFileAttributesEx failed\n");
+		return GetLastError();
+	}
+
+	fileSize = fileAttr.nFileSizeHigh | fileAttr.nFileSizeLow;
+	
+	CTime systemTime(fileAttr.ftLastWriteTime);
+	lastWriteTime.assign(systemTime.Format(L"%Y/%m/%d %H:%M:%S"));
+
+	OutputDebugString(L"ファイルサイズ: ");
+	OutputDebugString(std::to_wstring(fileSize).c_str());
+	OutputDebugString(L"\n");
+
+	OutputDebugString(L"最終更新: ");
+	OutputDebugString(lastWriteTime.c_str());
+	OutputDebugString(L"\n");
+
+	return ERROR_SUCCESS;	
+}

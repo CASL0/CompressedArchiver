@@ -9,6 +9,7 @@
 #endif
 
 #include "Resource.h"		// メイン シンボル
+#include <string>
 
 
 // CCompressedArchiverApp:
@@ -19,6 +20,7 @@ class CCompressedArchiverApp : public CWinApp
 {
 public:
 	CCompressedArchiverApp();
+	std::wstring FormatErrorMessage(ULONG errorCode) const;
 
 // オーバーライド
 public:

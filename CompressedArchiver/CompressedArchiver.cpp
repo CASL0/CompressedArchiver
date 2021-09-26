@@ -7,6 +7,7 @@
 #include "CompressedArchiver.h"
 #include "CompressedArchiverDlg.h"
 #include <memory>
+#include <vector>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -74,3 +75,10 @@ BOOL CCompressedArchiverApp::InitInstance()
 	return FALSE;
 }
 
+std::wstring CCompressedArchiverApp::FormatErrorMessage(ULONG errorCode) const
+{
+	constexpr DWORD BUFFERLENGTH = 1024;
+	std::vector<wchar_t> buf(BUFFERLENGTH);
+	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, static_cast<DWORD>(errorCode), 0, buf.data(), BUFFERLENGTH - 1, 0);
+	return std::wstring(buf.data()) + L"\n";
+}
