@@ -31,6 +31,7 @@ void CreateCarDialog::DoDataExchange(CDataExchange* pDX)
 BOOL CreateCarDialog::OnInitDialog()
 {
 	(void)CDialogEx::OnInitDialog();
+	DragAcceptFiles();
 	EnableDynamicLayout(TRUE);
 	(void)m_pDynamicLayout->Create(this);
 	(void)m_pDynamicLayout->AddItem(IDC_ITEM_LIST, CMFCDynamicLayout::MoveNone(), CMFCDynamicLayout::SizeHorizontalAndVertical(100, 100));
@@ -96,6 +97,7 @@ void CreateCarDialog::SetupComboBox()
 
 BEGIN_MESSAGE_MAP(CreateCarDialog, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_LIST, &CreateCarDialog::OnBnClickedButtonAddList)
+	ON_WM_DROPFILES()
 END_MESSAGE_MAP()
 
 
@@ -118,11 +120,7 @@ void CreateCarDialog::OnBnClickedButtonAddList()
 		return;
 	}
 
-	auto numItems = m_itemList.GetItemCount();
-	(void)m_itemList.InsertItem(numItems, dlg.GetPathName().GetString());
-	auto colum = 1;
-	(void)m_itemList.SetItemText(numItems, colum++, std::to_wstring(fileSize).c_str());
-	(void)m_itemList.SetItemText(numItems, colum++, lastWriteTime.c_str());
+	AddItemToList(dlg.GetPathName().GetString(), std::to_wstring(fileSize).c_str(), lastWriteTime.c_str());
 }
 
 DWORD CreateCarDialog::GetFileSizeAndLastWriteTime(const std::wstring& filePath, uint64_t& fileSize, std::wstring& lastWriteTime) const
@@ -151,4 +149,32 @@ DWORD CreateCarDialog::GetFileSizeAndLastWriteTime(const std::wstring& filePath,
 	OutputDebugString(L"\n");
 
 	return ERROR_SUCCESS;	
+}
+
+void CreateCarDialog::OnDropFiles(HDROP hDropInfo)
+{
+	auto length = DragQueryFile(hDropInfo, 0, nullptr, 0);
+	CString fileName;
+	(void)DragQueryFile(hDropInfo, 0, fileName.GetBuffer(length + 1), length + 1);
+	fileName.ReleaseBuffer();
+	uint64_t fileSize = 0;
+	std::wstring lastWriteTime;
+	if (auto ret = GetFileSizeAndLastWriteTime(fileName.GetString(), fileSize, lastWriteTime); ret != ERROR_SUCCESS)
+	{
+		OutputDebugString(theApp.FormatErrorMessage(ret).c_str());
+		return;
+	}
+
+	AddItemToList(fileName.GetString(), std::to_wstring(fileSize).c_str(), lastWriteTime.c_str());
+	CDialogEx::OnDropFiles(hDropInfo);
+}
+
+void CreateCarDialog::AddItemToList(const std::wstring& filePath, const std::wstring& fileSize, const std::wstring& lastWriteTime)
+{
+	auto numItems = m_itemList.GetItemCount();
+	(void)m_itemList.InsertItem(numItems, filePath.c_str());
+	auto colum = 1;
+	(void)m_itemList.SetItemText(numItems, colum++, fileSize.c_str());
+	(void)m_itemList.SetItemText(numItems, colum++, lastWriteTime.c_str());
+
 }

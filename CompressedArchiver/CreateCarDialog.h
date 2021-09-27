@@ -24,9 +24,11 @@ private:
 	BOOL OnInitDialog();
 	void SetupComboBox();
 	DWORD GetFileSizeAndLastWriteTime(const std::wstring& filePath, uint64_t& fileSize, std::wstring& lastWriteTime) const;
+	void AddItemToList(const std::wstring& filePath, const std::wstring& fileSize, const std::wstring& lastWriteTime);
 
 	CListCtrl m_itemList;
 	CComboBox m_comboAlgorithms;
 public:
 	afx_msg void OnBnClickedButtonAddList();
+	afx_msg void OnDropFiles(HDROP hDropInfo);
 };
