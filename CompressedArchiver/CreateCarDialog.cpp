@@ -171,10 +171,24 @@ void CreateCarDialog::OnDropFiles(HDROP hDropInfo)
 
 void CreateCarDialog::AddItemToList(const std::wstring& filePath, const std::wstring& fileSize, const std::wstring& lastWriteTime)
 {
+	if (CheckDoubled(filePath))
+	{
+		OutputDebugString(L"重複\n");
+		return;
+	}
+
 	auto numItems = m_itemList.GetItemCount();
 	(void)m_itemList.InsertItem(numItems, filePath.c_str());
 	auto colum = 1;
 	(void)m_itemList.SetItemText(numItems, colum++, fileSize.c_str());
 	(void)m_itemList.SetItemText(numItems, colum++, lastWriteTime.c_str());
 
+}
+
+bool CreateCarDialog::CheckDoubled(const std::wstring& filePath) const
+{
+	LVFINDINFO findInfo = { 0 };
+	findInfo.flags= LVFI_PARTIAL | LVFI_STRING;
+	findInfo.psz = filePath.c_str();
+	return m_itemList.FindItem(&findInfo) != -1;
 }

@@ -6,8 +6,10 @@
 #include "framework.h"
 #include "CompressedArchiver.h"
 #include "CompressedArchiverDlg.h"
+#include "xxhash.h"
 #include <memory>
 #include <vector>
+#include <random>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -81,4 +83,11 @@ std::wstring CCompressedArchiverApp::FormatErrorMessage(ULONG errorCode) const
 	std::vector<wchar_t> buf(BUFFERLENGTH);
 	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, nullptr, static_cast<DWORD>(errorCode), 0, buf.data(), BUFFERLENGTH - 1, 0);
 	return std::wstring(buf.data()) + L"\n";
+}
+
+uint32_t CCompressedArchiverApp::GenerateHash32(const std::string& buffer) const
+{
+	std::random_device rng;
+	auto seed = rng();
+	return XXH32(buffer.c_str(), buffer.length(), seed);
 }

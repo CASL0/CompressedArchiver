@@ -29,6 +29,10 @@ public:
 // 実装
 
 	DECLARE_MESSAGE_MAP()
+
+private:
+	uint32_t GenerateHash32(const std::string& buffer) const;
+
 };
 
 extern CCompressedArchiverApp theApp;
