@@ -85,9 +85,92 @@ std::wstring CCompressedArchiverApp::FormatErrorMessage(ULONG errorCode) const
 	return std::wstring(buf.data()) + L"\n";
 }
 
-uint32_t CCompressedArchiverApp::GenerateHash32(const std::string& buffer) const
+uint32_t CCompressedArchiverApp::GenerateHash32(const std::vector<char>& buffer, uint32_t seed) const
 {
-	std::random_device rng;
-	auto seed = rng();
-	return XXH32(buffer.c_str(), buffer.length(), seed);
+	return XXH32(buffer.data(), buffer.size(), seed);
+}
+
+DWORD CCompressedArchiverApp::Archive(const std::list<std::wstring>& fileList, COMPRESS_ALGORITHM compressAlgorithm, const std::wstring& carFileName)
+{
+	CFileException ex;
+	if (!m_outputCarFile.Open(carFileName.c_str(), CFile::modeCreate | CFile::modeWrite | CFile::typeBinary | CFile::shareDenyWrite, &ex))
+	{
+		OutputDebugString(L"File open error: ");
+		OutputDebugString(ex.m_strFileName);
+		OutputDebugString(L"\n");
+		return ex.m_lOsError;
+	}
+
+	for (const auto& elem : fileList)
+	{
+		if (auto ret = InsertToArchiveFiles(elem, compressAlgorithm); ret != ERROR_SUCCESS)
+		{
+			OutputDebugString(FormatErrorMessage(ret).c_str());
+			return ret;
+		}
+	}
+
+	return ERROR_SUCCESS;
+}
+
+DWORD CCompressedArchiverApp::InsertToArchiveFiles(const std::wstring& inputFileName, COMPRESS_ALGORITHM compressAlgorithm)
+{
+	CarHeader header;
+	header.fileName = Utf16ToUtf8(inputFileName);
+	header.compressionMethod = static_cast<uint8_t>(compressAlgorithm);
+
+	//ヘッダーデータは後で書き込むためヘッダーの先頭を保存
+	auto savedPosition = m_outputCarFile.GetPosition();
+	WriteFileHeader(header);
+
+	//TODO: データの圧縮＋書き込み
+}
+
+void CCompressedArchiverApp::WriteFileHeader(CarHeader& header)
+{
+	m_outputCarFile.Write(header.fileName.c_str(), static_cast<UINT>(header.fileName.length()));
+	uint8_t zero = 0;
+	m_outputCarFile.Write(&zero, 1);
+
+	//ヘッダーのチェックサムはxxHash(ヘッダー全体,xxHash(ファイル名,0))
+	auto headerCheckSum = GenerateHash32(std::vector<char>(header.fileName.c_str(), header.fileName.c_str() + header.fileName.length()));
+
+	std::vector<uint8_t> headerData(CAR_HEADER_BYTE);//チェックサム用のヘッダバッファ
+	DWORD offset = 0;
+
+	//圧縮アルゴリズム
+	m_outputCarFile.Write(&header.compressionMethod, CAR_HEADER_COMPRESSION_METHOD_FIELD_BYTE);
+	std::memcpy(headerData.data(), &header.compressionMethod, CAR_HEADER_COMPRESSION_METHOD_FIELD_BYTE);
+	offset += CAR_HEADER_COMPRESSION_METHOD_FIELD_BYTE;
+
+	//元のファイルサイズ
+	m_outputCarFile.Write(&header.originalSize, CAR_HEADER_ORIGINAL_SIZE_FIELD_BYTE);
+	std::memcpy(headerData.data() + offset , &header.originalSize, CAR_HEADER_ORIGINAL_SIZE_FIELD_BYTE);
+	offset += CAR_HEADER_ORIGINAL_SIZE_FIELD_BYTE;
+
+	//圧縮後のファイルサイズ
+	m_outputCarFile.Write(&header.compressedSize, CAR_HEADER_COMPRESSED_SIZE_FIELD_BYTE);
+	std::memcpy(headerData.data() + offset , &header.compressedSize, CAR_HEADER_COMPRESSED_SIZE_FIELD_BYTE);
+	offset += CAR_HEADER_COMPRESSED_SIZE_FIELD_BYTE;
+
+	//最終更新日時
+	m_outputCarFile.Write(&header.lastWriteTime, CAR_HEADER_LAST_WRITE_TIME_FIELD_BYTE);
+	std::memcpy(headerData.data() + offset, &header.lastWriteTime, CAR_HEADER_LAST_WRITE_TIME_FIELD_BYTE);
+	offset += CAR_HEADER_LAST_WRITE_TIME_FIELD_BYTE;
+
+	m_outputCarFile.Write(&header.fileCheckSum, CAR_HEADER_FILE_CHECK_SUME_FIELD_BYTE);
+	std::memcpy(headerData.data() + offset, &header.fileCheckSum, CAR_HEADER_FILE_CHECK_SUME_FIELD_BYTE);
+	offset += CAR_HEADER_FILE_CHECK_SUME_FIELD_BYTE;
+
+	header.headerCheckSum = GenerateHash32(std::vector<char>(headerData.front(), headerData.back()), headerCheckSum);
+	m_outputCarFile.Write(&header.headerCheckSum, CAR_HEADER_HEADERL_CHECK_SUME_FIELD_BYTE);
+
+}
+
+std::string CCompressedArchiverApp::Utf16ToUtf8(const std::wstring& src) const
+{
+	auto bufLen = WideCharToMultiByte(CP_UTF8, 0, src.c_str(), -1, nullptr, 0, nullptr, nullptr);
+	std::vector<char> buffer(bufLen);
+	(void)WideCharToMultiByte(CP_UTF8, 0, src.c_str(), -1, buffer.data(), bufLen, nullptr, nullptr);
+	return std::string(buffer.data(), bufLen);
 }

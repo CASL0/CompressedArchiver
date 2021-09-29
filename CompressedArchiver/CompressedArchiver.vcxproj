@@ -81,6 +81,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>../submodule/xxHash/;$(IncludePath)</IncludePath>
     <LibraryPath>../ThirdParty/lib/;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -140,6 +141,12 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Command>set OUTPUT_DIR="$(SolutionDir)bin\"
+if not exist %OUTPUT_DIR% mkdir %OUTPUT_DIR%
+copy "$(TargetPath)" %OUTPUT_DIR%
+copy "$(SolutionDir)ThirdParty\lib\xxhashd.dll" "%OUTPUT_DIR%xxhash.dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -199,6 +206,12 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Command>set OUTPUT_DIR="$(SolutionDir)bin\"
+if not exist %OUTPUT_DIR% mkdir %OUTPUT_DIR%
+copy "$(TargetPath)" %OUTPUT_DIR%
+copy "$(SolutionDir)ThirdParty\lib\xxhash.dll" "%OUTPUT_DIR%xxhash.dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CompressedArchiver.h" />
