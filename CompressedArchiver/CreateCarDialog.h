@@ -26,6 +26,7 @@ private:
 	DWORD GetFileSizeAndLastWriteTime(const std::wstring& filePath, uint64_t& fileSize, std::wstring& lastWriteTime) const;
 	void AddItemToList(const std::wstring& filePath, const std::wstring& fileSize, const std::wstring& lastWriteTime);
 	bool CheckDoubled(const std::wstring& filePath) const;
+	void ClearItems();
 
 	CListCtrl m_itemList;
 	CComboBox m_comboAlgorithms;

@@ -157,7 +157,7 @@ DWORD CCompressedArchiverApp::InsertToArchiveFiles(const std::wstring& inputFile
 	header.compressedSize = static_cast<uint32_t>(compressedData.size());
 	header.fileCheckSum = GenerateHash32(inputBuffer);
 	m_outputCarFile.Write(compressedData.data(), static_cast<UINT>(compressedData.size()));
-	m_outputCarFile.Seek(savedPosition, CFile::begin());
+	(void)m_outputCarFile.Seek(savedPosition, CFile::begin());
 	WriteFileHeader(header);
 	m_outputCarFile.SeekToEnd();
 	

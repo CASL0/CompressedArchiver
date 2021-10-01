@@ -194,6 +194,12 @@ bool CreateCarDialog::CheckDoubled(const std::wstring& filePath) const
 	return m_itemList.FindItem(&findInfo) != -1;
 }
 
+void CreateCarDialog::ClearItems()
+{
+	(void)m_itemList.DeleteAllItems();
+	GetDlgItem(IDC_EDIT_CARFILE)->SetWindowTextW(L"");
+}
+
 void CreateCarDialog::OnBnClickedButtonCreate()
 {
 	std::list<std::wstring> fileNameList;
@@ -212,6 +218,11 @@ void CreateCarDialog::OnBnClickedButtonCreate()
 	{
 		auto errorMessage = theApp.FormatErrorMessage(ret);
 		OutputDebugString(errorMessage.c_str());
-		AfxMessageBox(errorMessage.c_str(), MB_ICONSTOP);
+		(void)AfxMessageBox(errorMessage.c_str(), MB_ICONSTOP);
+		ClearItems();
+		return;
 	}
+
+	OutputDebugString(L"CARファイルの作成に成功しました。\n");
+	ClearItems();
 }
