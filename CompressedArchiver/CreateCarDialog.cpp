@@ -154,19 +154,23 @@ DWORD CreateCarDialog::GetFileSizeAndLastWriteTime(const std::wstring& filePath,
 
 void CreateCarDialog::OnDropFiles(HDROP hDropInfo)
 {
-	auto length = DragQueryFile(hDropInfo, 0, nullptr, 0);
-	CString fileName;
-	(void)DragQueryFile(hDropInfo, 0, fileName.GetBuffer(length + 1), length + 1);
-	fileName.ReleaseBuffer();
-	uint64_t fileSize = 0;
-	std::wstring lastWriteTime;
-	if (auto ret = GetFileSizeAndLastWriteTime(fileName.GetString(), fileSize, lastWriteTime); ret != ERROR_SUCCESS)
+	auto numDroppedFiles = DragQueryFile(hDropInfo, 0xFFFFFFFF, nullptr, 0);
+	for (UINT i = 0; i < numDroppedFiles; i++)
 	{
-		OutputDebugString(theApp.FormatErrorMessage(ret).c_str());
-		return;
-	}
+		auto length = DragQueryFile(hDropInfo, i, nullptr, 0);
+		CString fileName;
+		(void)DragQueryFile(hDropInfo, i, fileName.GetBuffer(length + 1), length + 1);
+		fileName.ReleaseBuffer();
+		uint64_t fileSize = 0;
+		std::wstring lastWriteTime;
+		if (auto ret = GetFileSizeAndLastWriteTime(fileName.GetString(), fileSize, lastWriteTime); ret != ERROR_SUCCESS)
+		{
+			OutputDebugString(theApp.FormatErrorMessage(ret).c_str());
+			return;
+		}
 
-	AddItemToList(fileName.GetString(), std::to_wstring(fileSize).c_str(), lastWriteTime.c_str());
+		AddItemToList(fileName.GetString(), std::to_wstring(fileSize).c_str(), lastWriteTime.c_str());
+	}
 	CDialogEx::OnDropFiles(hDropInfo);
 }
 
@@ -210,7 +214,7 @@ void CreateCarDialog::OnBnClickedButtonCreate()
 		fileNameList.push_back(fileName.GetString());
 	}
 
-	COMPRESS_ALGORITHM algorithm = static_cast<COMPRESS_ALGORITHM>(m_comboAlgorithms.GetTopIndex());
+	COMPRESS_ALGORITHM algorithm = static_cast<COMPRESS_ALGORITHM>(m_comboAlgorithms.GetCurSel());
 
 	CString outputCarFileName;
 	GetDlgItem(IDC_EDIT_CARFILE)->GetWindowTextW(outputCarFileName);
