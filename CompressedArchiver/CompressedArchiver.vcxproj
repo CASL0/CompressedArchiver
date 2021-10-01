@@ -219,6 +219,7 @@ copy "$(SolutionDir)ThirdParty\lib\xxhash.dll" "%OUTPUT_DIR%xxhash.dll"</Command
     <ClInclude Include="Compressor.h" />
     <ClInclude Include="CreateCarDialog.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="OpenCarDialog.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
@@ -228,6 +229,7 @@ copy "$(SolutionDir)ThirdParty\lib\xxhash.dll" "%OUTPUT_DIR%xxhash.dll"</Command
     <ClCompile Include="CompressedArchiverDlg.cpp" />
     <ClCompile Include="Compressor.cpp" />
     <ClCompile Include="CreateCarDialog.cpp" />
+    <ClCompile Include="OpenCarDialog.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

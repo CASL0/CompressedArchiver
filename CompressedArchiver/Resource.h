@@ -5,6 +5,7 @@
 #define IDD_COMPRESSEDARCHIVER_DIALOG   102
 #define IDR_MAINFRAME                   128
 #define IDD_CREATE_CAR_DIALOG           130
+#define IDD_OPEN_CAR_DIALOG             134
 #define IDC_BUTTON_CREATE_CAR           1002
 #define IDC_ITEM_LIST                   1003
 #define IDC_EDIT_CARFILE                1004
@@ -13,6 +14,10 @@
 #define IDC_GROUP_CAR_SETTING           1008
 #define IDC_LABEL_CAR_NAME              1009
 #define IDC_BUTTON_ADD_LIST             1010
+#define IDC_OPEN_ARCHIVE                1011
+#define IDC_EDIT_OPENED_CAR             1012
+#define IDC_FILE_LIST_IN_CAR            1013
+#define IDC_LABEL_ARCHIVE               1014
 #define IDS_BUTTON_CREATE_CAR           10000
 #define IDS_TITLE_CREATE_CAR            10001
 #define IDS_LIST_HEADER_NAME            10002
@@ -26,14 +31,17 @@
 #define IDS_COMBO_ALGORITHM_XPRESS      10010
 #define IDS_COMBO_ALGORITHM_XPRESS_HUFFMAN 10011
 #define IDS_COMBO_ALGORITHM_LZMS        10012
+#define IDS_ARCHIVE_NAME                10013
+#define IDS_BUTTON_OPEN_CAR             10014
+#define IDS_TITLE_OPEN_CAR              10015
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        134
+#define _APS_NEXT_RESOURCE_VALUE        137
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1011
+#define _APS_NEXT_CONTROL_VALUE         1015
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
