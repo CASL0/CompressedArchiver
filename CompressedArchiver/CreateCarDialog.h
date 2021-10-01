@@ -32,4 +32,5 @@ private:
 public:
 	afx_msg void OnBnClickedButtonAddList();
 	afx_msg void OnDropFiles(HDROP hDropInfo);
+	afx_msg void OnBnClickedButtonCreate();
 };

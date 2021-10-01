@@ -128,7 +128,7 @@ DWORD CCompressedArchiverApp::InsertToArchiveFiles(const std::wstring& inputFile
 	CarHeader header;
 	header.fileName = Utf16ToUtf8(inputFile.GetFileName().GetString());
 	header.compressionMethod = static_cast<uint8_t>(compressAlgorithm);
-	header.originalSize = inputFile.GetLength();
+	header.originalSize = static_cast<uint32_t>(inputFile.GetLength());
 
 	WIN32_FILE_ATTRIBUTE_DATA fileAttr = { 0 };
 	if (!GetFileAttributesEx(inputFileName.c_str(), GetFileExInfoStandard, &fileAttr))
@@ -154,8 +154,9 @@ DWORD CCompressedArchiverApp::InsertToArchiveFiles(const std::wstring& inputFile
 		return ret;
 	}
 
+	header.compressedSize = static_cast<uint32_t>(compressedData.size());
 	header.fileCheckSum = GenerateHash32(inputBuffer);
-	m_outputCarFile.Write(compressedData.data(), compressedData.size());
+	m_outputCarFile.Write(compressedData.data(), static_cast<UINT>(compressedData.size()));
 	m_outputCarFile.Seek(savedPosition, CFile::begin());
 	WriteFileHeader(header);
 	m_outputCarFile.SeekToEnd();

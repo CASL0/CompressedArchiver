@@ -98,6 +98,7 @@ void CreateCarDialog::SetupComboBox()
 BEGIN_MESSAGE_MAP(CreateCarDialog, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_LIST, &CreateCarDialog::OnBnClickedButtonAddList)
 	ON_WM_DROPFILES()
+	ON_BN_CLICKED(IDC_BUTTON_CREATE, &CreateCarDialog::OnBnClickedButtonCreate)
 END_MESSAGE_MAP()
 
 
@@ -191,4 +192,26 @@ bool CreateCarDialog::CheckDoubled(const std::wstring& filePath) const
 	findInfo.flags= LVFI_PARTIAL | LVFI_STRING;
 	findInfo.psz = filePath.c_str();
 	return m_itemList.FindItem(&findInfo) != -1;
+}
+
+void CreateCarDialog::OnBnClickedButtonCreate()
+{
+	std::list<std::wstring> fileNameList;
+	auto numItems = m_itemList.GetItemCount();
+	for (auto i = 0; i < numItems; i++)
+	{
+		auto fileName = m_itemList.GetItemText(i, 0);
+		fileNameList.push_back(fileName.GetString());
+	}
+
+	COMPRESS_ALGORITHM algorithm = static_cast<COMPRESS_ALGORITHM>(m_comboAlgorithms.GetTopIndex());
+
+	CString outputCarFileName;
+	GetDlgItem(IDC_EDIT_CARFILE)->GetWindowTextW(outputCarFileName);
+	if (auto ret = theApp.Archive(fileNameList, algorithm, outputCarFileName.GetString()); ret != ERROR_SUCCESS)
+	{
+		auto errorMessage = theApp.FormatErrorMessage(ret);
+		OutputDebugString(errorMessage.c_str());
+		AfxMessageBox(errorMessage.c_str(), MB_ICONSTOP);
+	}
 }
