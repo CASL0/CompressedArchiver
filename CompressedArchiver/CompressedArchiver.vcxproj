@@ -147,6 +147,9 @@ if not exist %OUTPUT_DIR% mkdir %OUTPUT_DIR%
 copy "$(TargetPath)" %OUTPUT_DIR%
 copy "$(SolutionDir)ThirdParty\lib\xxhashd.dll" "%OUTPUT_DIR%xxhash.dll"</Command>
     </PostBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -212,6 +215,9 @@ if not exist %OUTPUT_DIR% mkdir %OUTPUT_DIR%
 copy "$(TargetPath)" %OUTPUT_DIR%
 copy "$(SolutionDir)ThirdParty\lib\xxhash.dll" "%OUTPUT_DIR%xxhash.dll"</Command>
     </PostBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CompressedArchiver.h" />

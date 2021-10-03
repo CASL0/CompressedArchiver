@@ -34,6 +34,11 @@
 #define IDS_ARCHIVE_NAME                10013
 #define IDS_BUTTON_OPEN_CAR             10014
 #define IDS_TITLE_OPEN_CAR              10015
+#define IDS_LIST_HEADER_METHOD          10016
+#define IDS_LIST_HEADER_ORIGINAL_SIZE   10017
+#define IDS_LIST_HEADER_COMPRESSED_SIZE 10018
+#define IDS_LIST_HEADER_RATIO           10019
+#define IDS_LIST_HEADER_CHECK_SUM       10020
 
 // Next default values for new objects
 // 

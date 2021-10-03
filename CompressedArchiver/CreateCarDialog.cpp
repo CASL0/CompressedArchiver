@@ -48,7 +48,7 @@ BOOL CreateCarDialog::OnInitDialog()
 
 	(void)m_itemList.SetExtendedStyle(m_itemList.GetExtendedStyle() | LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_HEADERDRAGDROP);
 	(void)resourceStr.LoadStringW(IDS_LIST_HEADER_NAME);
-	(void)m_itemList.InsertColumn(0, resourceStr, LVCFMT_LEFT, 300);
+	(void)m_itemList.InsertColumn(0, resourceStr, LVCFMT_LEFT, 400);
 
 	(void)resourceStr.LoadStringW(IDS_LIST_HEADER_SIZE);
 	(void)m_itemList.InsertColumn(1, resourceStr, LVCFMT_LEFT, 100);

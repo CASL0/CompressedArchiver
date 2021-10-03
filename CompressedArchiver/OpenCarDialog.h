@@ -23,5 +23,10 @@ protected:
 
 private:
 	BOOL OnInitDialog();
+	void AddItemToList(const CCompressedArchiverApp::CarHeader& header);
 	CListCtrl m_fileList;
+public:
+	afx_msg void OnEnChangeEditOpenedCar();
+private:
+	CMFCEditBrowseCtrl m_editCarFileName;
 };
