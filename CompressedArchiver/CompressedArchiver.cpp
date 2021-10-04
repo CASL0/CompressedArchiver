@@ -175,7 +175,7 @@ DWORD CCompressedArchiverApp::InsertToArchiveFiles(const std::wstring& inputFile
 		OutputDebugString(L"GetFileAttributesEx failed\n");
 		return GetLastError();
 	}
-	header.lastWriteTime = fileAttr.ftLastWriteTime.dwHighDateTime | fileAttr.ftLastWriteTime.dwLowDateTime;
+	header.lastWriteTime = (static_cast<uint64_t>(fileAttr.ftLastWriteTime.dwHighDateTime) << 32) | fileAttr.ftLastWriteTime.dwLowDateTime;
 
 	std::vector<char> inputBuffer(header.originalSize);
 	auto bufLen = inputFile.Read(inputBuffer.data(), header.originalSize);
