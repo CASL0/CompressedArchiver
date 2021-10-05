@@ -81,7 +81,7 @@ void OpenCarDialog::AddItemToList(const CCompressedArchiverApp::CarHeader& heade
 	{
 		{COMPRESS_ALGORITHM::MSZIP, L"ZIP"},
 		{COMPRESS_ALGORITHM::XPRESS, L"XPRESS"},
-		{COMPRESS_ALGORITHM::XPRESS, L"XPRESS+ハフマン"},
+		{COMPRESS_ALGORITHM::XPRESS_HUFF, L"XPRESS+ハフマン"},
 		{COMPRESS_ALGORITHM::LZMS, L"LZMS"},
 	};
 

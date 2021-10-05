@@ -39,6 +39,7 @@
 #define IDS_LIST_HEADER_COMPRESSED_SIZE 10018
 #define IDS_LIST_HEADER_RATIO           10019
 #define IDS_LIST_HEADER_CHECK_SUM       10020
+#define IDS_WARN_BROKEN_PACKAGE         10021
 
 // Next default values for new objects
 // 

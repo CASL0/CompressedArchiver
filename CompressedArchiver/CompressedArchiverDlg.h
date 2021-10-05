@@ -33,4 +33,6 @@ protected:
 public:
 	afx_msg void OnBnClickedButtonCreateCar();
 	afx_msg void OnBnClickedOpenArchive();
+private:
+	LRESULT onDetectBroken(WPARAM wParam, LPARAM lParam);
 };

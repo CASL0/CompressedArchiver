@@ -47,6 +47,8 @@ public:
 										+ CAR_HEADER_FILE_CHECK_SUM_FIELD_BYTE;
 	static const char CAR_TERMINATOR = 0;
 
+	static const UINT APP_MESSAGE_BROKEN_PACKAGE = WM_APP + 1;
+
 public:
 	CCompressedArchiverApp();
 	std::wstring FormatErrorMessage(ULONG errorCode) const;

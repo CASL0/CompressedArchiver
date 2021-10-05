@@ -201,7 +201,7 @@ void CCompressedArchiverApp::WriteFileHeader(CarHeader& header)
 	m_outputCarFile.Write(header.fileName.c_str(), static_cast<UINT>(header.fileName.length()));
 
 	//ヘッダーのチェックサムはxxHash(ヘッダー全体,xxHash(ファイル名,0))
-	auto headerCheckSum = GenerateHash32(std::vector<char>(header.fileName.c_str(), header.fileName.c_str() + header.fileName.length()));
+	auto headerCheckSum = GenerateHash32(std::vector<char>(header.fileName.c_str(), header.fileName.c_str() + header.fileName.length() - 1));
 
 	std::vector<uint8_t> headerData(CAR_HEADER_BYTE);//チェックサム用のヘッダバッファ
 	DWORD offset = 0;
@@ -296,6 +296,13 @@ bool CCompressedArchiverApp::ReadFileHeader(CFile& inputCarFile, CarHeader* head
 	offset += CAR_HEADER_FILE_CHECK_SUM_FIELD_BYTE;
 
 	(void)inputCarFile.Read(&tmpHeader.headerCheckSum, CAR_HEADER_HEADER_CHECK_SUM_FIELD_BYTE);
+
+	auto checkSum = GenerateHash32(std::vector<char>(headerData.front(), headerData.back()), GenerateHash32(std::vector<char>(tmpHeader.fileName.c_str(), tmpHeader.fileName.c_str() + tmpHeader.fileName.length())));
+	if (checkSum != tmpHeader.headerCheckSum)
+	{
+		OutputDebugString(L"不一致\n");
+		PostMessage(m_pMainWnd->m_hWnd, APP_MESSAGE_BROKEN_PACKAGE, reinterpret_cast<WPARAM>(Utf8ToUtf16(tmpHeader.fileName).c_str()), 0);
+	}
 
 	(void)inputCarFile.Seek(tmpHeader.compressedSize, CFile::current);
 	if (header)

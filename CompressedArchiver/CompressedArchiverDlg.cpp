@@ -35,6 +35,7 @@ BEGIN_MESSAGE_MAP(CCompressedArchiverDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON_CREATE_CAR, &CCompressedArchiverDlg::OnBnClickedButtonCreateCar)
 	ON_BN_CLICKED(IDC_OPEN_ARCHIVE, &CCompressedArchiverDlg::OnBnClickedOpenArchive)
+	ON_MESSAGE(CCompressedArchiverApp::APP_MESSAGE_BROKEN_PACKAGE, CCompressedArchiverDlg::onDetectBroken)
 END_MESSAGE_MAP()
 
 
@@ -111,4 +112,17 @@ void CCompressedArchiverDlg::OnBnClickedOpenArchive()
 {
 	OpenCarDialog dlg(this);
 	(void)dlg.DoModal();
+}
+
+LRESULT CCompressedArchiverDlg::onDetectBroken(WPARAM wParam, LPARAM lParam)
+{
+	auto brokenPackage = reinterpret_cast<wchar_t*>(wParam);
+	if (brokenPackage)
+	{
+		OutputDebugString(L"ファイルが破損しています：");
+		OutputDebugString(brokenPackage);
+		OutputDebugString(L"\n");
+	}
+	(void)AfxMessageBox(IDS_WARN_BROKEN_PACKAGE);
+	return ERROR_SUCCESS;
 }
