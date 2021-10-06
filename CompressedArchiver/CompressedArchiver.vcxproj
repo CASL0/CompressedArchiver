@@ -79,8 +79,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>../submodule/xxHash/;$(IncludePath)</IncludePath>
-    <LibraryPath>../ThirdParty/lib/;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -88,8 +88,14 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>../submodule/xxHash/;$(IncludePath)</IncludePath>
-    <LibraryPath>../ThirdParty/lib/;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <VcpkgTriplet>x64-windows-static</VcpkgTriplet>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <VcpkgTriplet>x64-windows-static</VcpkgTriplet>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -129,7 +135,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>Cabinet.lib;xxhashd.lib</AdditionalDependencies>
+      <AdditionalDependencies>Cabinet.lib;xxhash.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -142,10 +148,8 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>set OUTPUT_DIR="$(SolutionDir)bin\"
-if not exist %OUTPUT_DIR% mkdir %OUTPUT_DIR%
-copy "$(TargetPath)" %OUTPUT_DIR%
-copy "$(SolutionDir)ThirdParty\lib\xxhashd.dll" "%OUTPUT_DIR%xxhash.dll"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
@@ -210,10 +214,8 @@ copy "$(SolutionDir)ThirdParty\lib\xxhashd.dll" "%OUTPUT_DIR%xxhash.dll"</Comman
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>set OUTPUT_DIR="$(SolutionDir)bin\"
-if not exist %OUTPUT_DIR% mkdir %OUTPUT_DIR%
-copy "$(TargetPath)" %OUTPUT_DIR%
-copy "$(SolutionDir)ThirdParty\lib\xxhash.dll" "%OUTPUT_DIR%xxhash.dll"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
