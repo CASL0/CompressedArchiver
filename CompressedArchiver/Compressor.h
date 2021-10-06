@@ -8,6 +8,7 @@ enum class COMPRESS_ALGORITHM
 	XPRESS,
 	XPRESS_HUFF,
 	LZMS,
+	LZ4,
 };
 
 class Compressor
@@ -21,4 +22,9 @@ public:
 	unsigned long Compress(const std::vector<char>& src, std::vector<char>& dst) const;
 	unsigned long Decompress(const std::vector<char>& src, std::vector<char>& dst) const;
 
+private:
+	unsigned long CompressByWin32(const std::vector<char>& src, std::vector<char>& dst) const;
+	unsigned long DecompressByWin32(const std::vector<char>& src, std::vector<char>& dst) const;
+	unsigned long CompressByLz4(const std::vector<char>& src, std::vector<char>& dst) const;
+	unsigned long DecompressByLz4(const std::vector<char>& src, std::vector<char>& dst) const;
 };

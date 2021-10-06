@@ -40,6 +40,7 @@
 #define IDS_LIST_HEADER_RATIO           10019
 #define IDS_LIST_HEADER_CHECK_SUM       10020
 #define IDS_WARN_BROKEN_PACKAGE         10021
+#define IDS_COMBO_ALGORITHM_LZ4         10022
 
 // Next default values for new objects
 // 

@@ -91,6 +91,9 @@ void CreateCarDialog::SetupComboBox()
 	(void)resourceStr.LoadStringW(IDS_COMBO_ALGORITHM_LZMS);
 	(void)m_comboAlgorithms.InsertString(idx++, resourceStr);
 
+	(void)resourceStr.LoadStringW(IDS_COMBO_ALGORITHM_LZ4);
+	(void)m_comboAlgorithms.InsertString(idx++, resourceStr);
+
 	(void)m_comboAlgorithms.SetCurSel(0);
 
 }

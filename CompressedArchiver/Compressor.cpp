@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Compressor.h"
+#include "lz4.h"
 #include <compressapi.h>
 #include <memory>
 
@@ -41,6 +42,41 @@
 
 unsigned long Compressor::Compress(const std::vector<char>& src, std::vector<char>& dst) const
 {
+	switch (m_algorithm)
+	{
+	case COMPRESS_ALGORITHM::MSZIP:
+	case COMPRESS_ALGORITHM::XPRESS:
+	case COMPRESS_ALGORITHM::XPRESS_HUFF:
+	case COMPRESS_ALGORITHM::LZMS:
+		return CompressByWin32(src, dst);
+	case COMPRESS_ALGORITHM::LZ4:
+		return CompressByLz4(src, dst);
+	default:
+		break;
+	}
+	return ERROR_SUCCESS;
+}
+
+unsigned long Compressor::Decompress(const std::vector<char>& src, std::vector<char>& dst) const
+{
+	switch (m_algorithm)
+	{
+	case COMPRESS_ALGORITHM::MSZIP:
+	case COMPRESS_ALGORITHM::XPRESS:
+	case COMPRESS_ALGORITHM::XPRESS_HUFF:
+	case COMPRESS_ALGORITHM::LZMS:
+		return DecompressByWin32(src, dst);
+	case COMPRESS_ALGORITHM::LZ4:
+		return DecompressByLz4(src, dst);
+	default:
+		break;
+	}
+	return ERROR_SUCCESS;
+
+}
+
+unsigned long Compressor::CompressByWin32(const std::vector<char>& src, std::vector<char>& dst) const
+{
 	COMPRESSOR_HANDLE tmpHandle = nullptr;
 	if (!CreateCompressor(compressAlgorithmMap.at(m_algorithm), nullptr, &tmpHandle))
 	{
@@ -72,9 +108,8 @@ unsigned long Compressor::Compress(const std::vector<char>& src, std::vector<cha
 	return ERROR_SUCCESS;
 }
 
-unsigned long Compressor::Decompress(const std::vector<char>& src, std::vector<char>& dst) const
+unsigned long Compressor::DecompressByWin32(const std::vector<char>& src, std::vector<char>& dst) const
 {
-
 	DECOMPRESSOR_HANDLE tmpHandle = nullptr;
 	if (!CreateDecompressor(compressAlgorithmMap.at(m_algorithm), nullptr, &tmpHandle))
 	{
@@ -103,6 +138,26 @@ unsigned long Compressor::Decompress(const std::vector<char>& src, std::vector<c
 
 	decompressData.resize(decompressDataSize);
 	dst.swap(decompressData);
+	return ERROR_SUCCESS;
+}
+
+unsigned long Compressor::CompressByLz4(const std::vector<char>& src, std::vector<char>& dst) const
+{
+	auto dstCapacity = LZ4_compressBound(static_cast<int>(src.size()));
+	dst.resize(dstCapacity);
+	auto dstSize = LZ4_compress_default(src.data(), dst.data(), static_cast<int>(src.size()), dstCapacity);
+	dst.resize(dstSize);
+	return ERROR_SUCCESS;
+}
+
+unsigned long Compressor::DecompressByLz4(const std::vector<char>& src, std::vector<char>& dst) const
+{
+
+	//復号キャパシティの理論値参考：https://stackoverflow.com/questions/42114762/how-to-know-when-the-output-buffer-is-too-small-when-decompressing-with-lz4
+	int dstCapacity = 255 * src.size() - 2526;
+	dst.resize(dstCapacity);
+	auto dstSize = LZ4_decompress_safe(src.data(), dst.data(), src.size(), dstCapacity);
+	dst.resize(dstSize);
 	return ERROR_SUCCESS;
 }
 
