@@ -3,7 +3,8 @@
 //
 
 #pragma once
-
+#include "CreateCarDialog.h"
+#include "OpenCarDialog.h"
 
 // CCompressedArchiverDlg ダイアログ
 class CCompressedArchiverDlg : public CDialogEx
@@ -35,4 +36,9 @@ public:
 	afx_msg void OnBnClickedOpenArchive();
 private:
 	LRESULT onDetectBroken(WPARAM wParam, LPARAM lParam);
+	CTabCtrl m_tabCtrl;
+	CreateCarDialog m_createCarDlg{ &m_tabCtrl };
+	OpenCarDialog m_openCarDlg{ &m_tabCtrl };
+public:
+	afx_msg void OnTcnSelchangeTabFunctions(NMHDR* pNMHDR, LRESULT* pResult);
 };

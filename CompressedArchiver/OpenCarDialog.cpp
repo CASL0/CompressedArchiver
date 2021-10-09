@@ -57,7 +57,7 @@ BOOL OpenCarDialog::OnInitDialog()
 	(void)m_fileList.InsertColumn(listColum++, resourceStr, LVCFMT_LEFT, 150);
 
 	(void)resourceStr.LoadStringW(IDS_LIST_HEADER_COMPRESSED_SIZE);
-	(void)m_fileList.InsertColumn(listColum++, resourceStr, LVCFMT_LEFT, 150);
+	(void)m_fileList.InsertColumn(listColum++, resourceStr, LVCFMT_LEFT, 160);
 
 	(void)resourceStr.LoadStringW(IDS_LIST_HEADER_RATIO);
 	(void)m_fileList.InsertColumn(listColum++, resourceStr, LVCFMT_LEFT, 100);

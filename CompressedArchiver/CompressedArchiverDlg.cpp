@@ -28,14 +28,14 @@ CCompressedArchiverDlg::CCompressedArchiverDlg(CWnd* pParent /*=nullptr*/)
 void CCompressedArchiverDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_TAB_FUNCTIONS, m_tabCtrl);
 }
 
 BEGIN_MESSAGE_MAP(CCompressedArchiverDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON_CREATE_CAR, &CCompressedArchiverDlg::OnBnClickedButtonCreateCar)
-	ON_BN_CLICKED(IDC_OPEN_ARCHIVE, &CCompressedArchiverDlg::OnBnClickedOpenArchive)
 	ON_MESSAGE(CCompressedArchiverApp::APP_MESSAGE_BROKEN_PACKAGE, CCompressedArchiverDlg::onDetectBroken)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB_FUNCTIONS, &CCompressedArchiverDlg::OnTcnSelchangeTabFunctions)
 END_MESSAGE_MAP()
 
 
@@ -53,12 +53,34 @@ BOOL CCompressedArchiverDlg::OnInitDialog()
 	CString loadStr;
 	(void)loadStr.LoadStringW(AFX_IDS_APP_TITLE);
 	SetWindowText(loadStr);
-	(void)loadStr.LoadStringW(IDS_BUTTON_CREATE_CAR);
-	GetDlgItem(IDC_BUTTON_CREATE_CAR)->SetWindowTextW(loadStr);
 
-	(void)loadStr.LoadStringW(IDS_BUTTON_OPEN_CAR);
-	GetDlgItem(IDC_OPEN_ARCHIVE)->SetWindowTextW(loadStr);
+	EnableDynamicLayout(TRUE);
+	(void)m_pDynamicLayout->Create(this);
+	(void)m_pDynamicLayout->AddItem(IDC_TAB_FUNCTIONS, CMFCDynamicLayout::MoveNone(), CMFCDynamicLayout::SizeHorizontalAndVertical(100, 100));
 
+	CRect rect;
+	GetWindowRect(&rect);
+	(void)SetWindowPos(nullptr, rect.left, rect.top, 1100, 600, SWP_SHOWWINDOW);
+
+	auto numTabs = 0;
+	(void)loadStr.LoadStringW(IDS_TAB_CREATE_CAR);
+	(void)m_tabCtrl.InsertItem(numTabs++, loadStr);
+
+	(void)loadStr.LoadStringW(IDS_TAB_OPEN_CAR);
+	(void)m_tabCtrl.InsertItem(numTabs++, loadStr);
+
+	CRect clientRect;
+	m_tabCtrl.GetClientRect(&clientRect);
+	clientRect.top += 22;
+
+	(void)m_createCarDlg.Create(IDD_CREATE_CAR_DIALOG, &m_tabCtrl);
+	m_createCarDlg.MoveWindow(&clientRect);
+
+	(void)m_openCarDlg.Create(IDD_OPEN_CAR_DIALOG, &m_tabCtrl);
+	m_openCarDlg.MoveWindow(&clientRect);
+
+	(void)m_tabCtrl.SetCurSel(0);
+	OnTcnSelchangeTabFunctions(nullptr, nullptr);
 
 	return TRUE;  // フォーカスをコントロールに設定した場合を除き、TRUE を返します。
 }
@@ -99,21 +121,6 @@ HCURSOR CCompressedArchiverDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
-
-void CCompressedArchiverDlg::OnBnClickedButtonCreateCar()
-{
-	CreateCarDialog dlg(this);
-	(void)dlg.DoModal();
-}
-
-
-void CCompressedArchiverDlg::OnBnClickedOpenArchive()
-{
-	OpenCarDialog dlg(this);
-	(void)dlg.DoModal();
-}
-
 LRESULT CCompressedArchiverDlg::onDetectBroken(WPARAM wParam, LPARAM lParam)
 {
 	auto brokenPackage = reinterpret_cast<wchar_t*>(wParam);
@@ -125,4 +132,19 @@ LRESULT CCompressedArchiverDlg::onDetectBroken(WPARAM wParam, LPARAM lParam)
 	}
 	(void)AfxMessageBox(IDS_WARN_BROKEN_PACKAGE);
 	return ERROR_SUCCESS;
+}
+
+void CCompressedArchiverDlg::OnTcnSelchangeTabFunctions(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	auto curSel = m_tabCtrl.GetCurSel();
+	if (curSel == 0)
+	{
+		(void)m_createCarDlg.ShowWindow(SW_SHOW);
+		(void)m_openCarDlg.ShowWindow(SW_HIDE);
+	}
+	else if (curSel == 1)
+	{
+		(void)m_createCarDlg.ShowWindow(SW_HIDE);
+		(void)m_openCarDlg.ShowWindow(SW_SHOW);
+	}
 }
