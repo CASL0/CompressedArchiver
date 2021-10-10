@@ -1,5 +1,7 @@
-# CompressedArchiver
+# Compressed Archiver
 アーカイブパッケージマネージャーです。
+
+![メイン画面](dlg.png)
 
 ## 機能
 * アーカイブ機能
@@ -9,6 +11,7 @@
     * XPRESS + ハフマン
     * LZMS
     * LZ4
+    * Zstandard
   * xxHashによるチェックサム
 * アーカイブ内のリスト表示
 
@@ -20,11 +23,13 @@ Visual Studio 2019 Community
 依存ライブラリ
 * xxHash
 * LZ4
-```
+* Zstandard
+```cmd
 git clone https://github.com/Microsoft/vcpkg.git
 cd vcpkg
 bootstrap-vcpkg.bat
 vcpkg integrate install
 vcpkg install xxhash:x64-windows-static
 vcpkg install lz4:x64-windows-static
+vcpkg install zstd:x64-windows-static
 ```
