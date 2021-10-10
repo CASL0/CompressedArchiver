@@ -5,6 +5,7 @@
 #include "CompressedArchiver.h"
 #include "CreateCarDialog.h"
 #include "afxdialogex.h"
+#include <list>
 
 
 // CreateCarDialog ダイアログ
@@ -205,6 +206,54 @@ void CreateCarDialog::ClearItems()
 {
 	(void)m_itemList.DeleteAllItems();
 	GetDlgItem(IDC_EDIT_CARFILE)->SetWindowTextW(L"");
+}
+
+void CreateCarDialog::DeleteItems()
+{
+	auto position = m_itemList.GetFirstSelectedItemPosition();
+	if (position == nullptr)
+	{
+		//リストアイテム未選択
+		return;
+	}
+
+	std::list<int> itemsToDelete;
+	while (position)
+	{
+		auto item = m_itemList.GetNextSelectedItem(position);
+		itemsToDelete.push_back(item);
+	}
+
+	for (const auto& elem : itemsToDelete)
+	{
+		(void)m_itemList.DeleteItem(elem);
+	}
+}
+
+BOOL CreateCarDialog::PreTranslateMessage(MSG* msg)
+{
+	switch (msg->message)
+	{
+	case WM_KEYDOWN:
+		switch (msg->wParam)
+		{
+		case VK_ESCAPE:
+			return FALSE;
+		case VK_DELETE:
+			if (msg->hwnd == m_itemList.m_hWnd)
+			{
+				DeleteItems();
+			}
+			break;
+		default:
+			break;
+		}
+		break;
+	default:
+		break;
+	}
+
+	return CDialog::PreTranslateMessage(msg);
 }
 
 void CreateCarDialog::OnBnClickedButtonCreate()

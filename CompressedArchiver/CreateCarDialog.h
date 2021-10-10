@@ -27,6 +27,8 @@ private:
 	void AddItemToList(const std::wstring& filePath, const std::wstring& fileSize, const std::wstring& lastWriteTime);
 	bool CheckDoubled(const std::wstring& filePath) const;
 	void ClearItems();
+	void DeleteItems();
+	BOOL PreTranslateMessage(MSG* msg);
 
 	CListCtrl m_itemList;
 	CComboBox m_comboAlgorithms;
