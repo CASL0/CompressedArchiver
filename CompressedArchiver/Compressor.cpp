@@ -1,8 +1,10 @@
 #include "pch.h"
 #include "Compressor.h"
 #include "lz4.h"
+#include "zstd.h"
 #include <compressapi.h>
 #include <memory>
+#include <string>
 
 //参考：https://docs.microsoft.com/en-us/windows/win32/cmpapi/-compression-portal
 /*
@@ -51,14 +53,25 @@ unsigned long Compressor::Compress(const std::vector<char>& src, std::vector<cha
 		return CompressByWin32(src, dst);
 	case COMPRESS_ALGORITHM::LZ4:
 		return CompressByLz4(src, dst);
+	case COMPRESS_ALGORITHM::ZSTD:
+		return CompressByZstd(src, dst);
 	default:
 		break;
 	}
 	return ERROR_SUCCESS;
 }
 
+unsigned long Compressor::Compress(const std::vector<char>& src, std::vector<char>& dst, size_t dstSize) const
+{
+	dst.resize(dstSize);
+	return Compress(src, dst);
+}
+
 unsigned long Compressor::Decompress(const std::vector<char>& src, std::vector<char>& dst) const
 {
+	OutputDebugString(L"algorithm: ");
+	OutputDebugString(std::to_wstring(static_cast<int>(m_algorithm)).c_str());
+	OutputDebugString(L"\n");
 	switch (m_algorithm)
 	{
 	case COMPRESS_ALGORITHM::MSZIP:
@@ -68,11 +81,19 @@ unsigned long Compressor::Decompress(const std::vector<char>& src, std::vector<c
 		return DecompressByWin32(src, dst);
 	case COMPRESS_ALGORITHM::LZ4:
 		return DecompressByLz4(src, dst);
+	case COMPRESS_ALGORITHM::ZSTD:
+		return DecompressByZstd(src, dst);
 	default:
 		break;
 	}
 	return ERROR_SUCCESS;
 
+}
+
+unsigned long Compressor::Decompress(const std::vector<char>& src, std::vector<char>& dst, size_t dstSize) const
+{
+	dst.resize(dstSize);
+	return Decompress(src, dst);
 }
 
 unsigned long Compressor::CompressByWin32(const std::vector<char>& src, std::vector<char>& dst) const
@@ -154,9 +175,26 @@ unsigned long Compressor::DecompressByLz4(const std::vector<char>& src, std::vec
 {
 
 	//復号キャパシティの理論値参考：https://stackoverflow.com/questions/42114762/how-to-know-when-the-output-buffer-is-too-small-when-decompressing-with-lz4
-	int dstCapacity = 255 * src.size() - 2526;
+	int dstCapacity = 255 * static_cast<int>(src.size()) - 2526;
 	dst.resize(dstCapacity);
-	auto dstSize = LZ4_decompress_safe(src.data(), dst.data(), src.size(), dstCapacity);
+	auto dstSize = LZ4_decompress_safe(src.data(), dst.data(), static_cast<int>(src.size()), dstCapacity);
+	dst.resize(dstSize);
+	return ERROR_SUCCESS;
+}
+
+unsigned long Compressor::CompressByZstd(const std::vector<char>& src, std::vector<char>& dst) const
+{
+	auto dstCapacity = ZSTD_compressBound(src.size());
+	dst.resize(dstCapacity);
+	auto dstSize = ZSTD_compress(dst.data(), dstCapacity, src.data(), src.size(), ZSTD_CLEVEL_DEFAULT);
+	dst.resize(dstSize);
+	return ERROR_SUCCESS;
+}
+
+unsigned long Compressor::DecompressByZstd(const std::vector<char>& src, std::vector<char>& dst) const
+{
+	//dstはalloc済み
+	auto dstSize = ZSTD_decompress(dst.data(), dst.size(), src.data(), src.size());
 	dst.resize(dstSize);
 	return ERROR_SUCCESS;
 }

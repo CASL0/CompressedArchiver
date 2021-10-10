@@ -84,6 +84,7 @@ void OpenCarDialog::AddItemToList(const CCompressedArchiverApp::CarHeader& heade
 		{COMPRESS_ALGORITHM::XPRESS_HUFF, L"XPRESS+ハフマン"},
 		{COMPRESS_ALGORITHM::LZMS, L"LZMS"},
 		{COMPRESS_ALGORITHM::LZ4, L"LZ4"},
+		{COMPRESS_ALGORITHM::ZSTD, L"Zstandard"},
 	};
 
 	auto numItems = m_fileList.GetItemCount();
@@ -130,6 +131,8 @@ void OpenCarDialog::OnEnChangeEditOpenedCar()
 		(void)AfxMessageBox(errorMessage.c_str(), MB_ICONSTOP);
 		return;
 	}
+
+	(void)m_fileList.DeleteAllItems();
 	for (const auto& elem : headerList)
 	{
 		AddItemToList(elem);
