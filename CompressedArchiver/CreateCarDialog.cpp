@@ -6,6 +6,7 @@
 #include "CreateCarDialog.h"
 #include "afxdialogex.h"
 #include <list>
+#include <thread>
 
 
 // CreateCarDialog ダイアログ
@@ -103,6 +104,7 @@ void CreateCarDialog::SetupComboBox()
 }
 
 BEGIN_MESSAGE_MAP(CreateCarDialog, CDialogEx)
+	ON_MESSAGE(CCompressedArchiverApp::APP_MESSAGE_FAILURE_COMPRESS, CreateCarDialog::OnFailCompress)
 	ON_BN_CLICKED(IDC_BUTTON_ADD_LIST, &CreateCarDialog::OnBnClickedButtonAddList)
 	ON_WM_DROPFILES()
 	ON_BN_CLICKED(IDC_BUTTON_CREATE, &CreateCarDialog::OnBnClickedButtonCreate)
@@ -197,6 +199,14 @@ void CreateCarDialog::AddItemToList(const std::wstring& filePath, const std::wst
 
 }
 
+void CreateCarDialog::DispatchCompress(const std::list<std::wstring>& fileNameList, COMPRESS_ALGORITHM algorithm, const std::wstring& outputCarFileName)
+{
+	if (auto ret = theApp.Archive(fileNameList, algorithm, outputCarFileName); ret != ERROR_SUCCESS)
+	{
+		PostMessage(CCompressedArchiverApp::APP_MESSAGE_FAILURE_COMPRESS, ret, 0);
+	}
+}
+
 bool CreateCarDialog::CheckDoubled(const std::wstring& filePath) const
 {
 	LVFINDINFO findInfo = { 0 };
@@ -259,6 +269,16 @@ BOOL CreateCarDialog::PreTranslateMessage(MSG* msg)
 	return CDialog::PreTranslateMessage(msg);
 }
 
+LRESULT CreateCarDialog::OnFailCompress(WPARAM wParam, LPARAM lParam)
+{
+	auto errorCode = static_cast<DWORD>(wParam);
+	auto errorMessage = theApp.FormatErrorMessage(errorCode);
+	OutputDebugString(errorMessage.c_str());
+	(void)AfxMessageBox(errorMessage.c_str(), MB_ICONSTOP);
+
+	return ERROR_SUCCESS;
+}
+
 void CreateCarDialog::OnBnClickedButtonCreate()
 {
 	std::list<std::wstring> fileNameList;
@@ -273,15 +293,9 @@ void CreateCarDialog::OnBnClickedButtonCreate()
 
 	CString outputCarFileName;
 	GetDlgItem(IDC_EDIT_CARFILE)->GetWindowTextW(outputCarFileName);
-	if (auto ret = theApp.Archive(fileNameList, algorithm, outputCarFileName.GetString()); ret != ERROR_SUCCESS)
-	{
-		auto errorMessage = theApp.FormatErrorMessage(ret);
-		OutputDebugString(errorMessage.c_str());
-		(void)AfxMessageBox(errorMessage.c_str(), MB_ICONSTOP);
-		ClearItems();
-		return;
-	}
+	std::thread compressThread(&CreateCarDialog::DispatchCompress, this, fileNameList, algorithm, outputCarFileName.GetString());
+	compressThread.detach();
 
-	OutputDebugString(L"CARファイルの作成に成功しました。\n");
+	OutputDebugString(L"CARファイルの作成をディスパッチしました。\n");
 	ClearItems();
 }

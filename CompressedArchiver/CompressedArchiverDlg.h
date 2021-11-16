@@ -35,7 +35,7 @@ public:
 	afx_msg void OnBnClickedButtonCreateCar();
 	afx_msg void OnBnClickedOpenArchive();
 private:
-	LRESULT onDetectBroken(WPARAM wParam, LPARAM lParam);
+	LRESULT OnDetectBroken(WPARAM wParam, LPARAM lParam);
 	CTabCtrl m_tabCtrl;
 	CreateCarDialog m_createCarDlg{ &m_tabCtrl };
 	OpenCarDialog m_openCarDlg{ &m_tabCtrl };

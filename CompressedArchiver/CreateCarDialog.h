@@ -25,10 +25,12 @@ private:
 	void SetupComboBox();
 	DWORD GetFileSizeAndLastWriteTime(const std::wstring& filePath, uint64_t& fileSize, std::wstring& lastWriteTime) const;
 	void AddItemToList(const std::wstring& filePath, const std::wstring& fileSize, const std::wstring& lastWriteTime);
+	void DispatchCompress(const std::list<std::wstring>& fileNameList, COMPRESS_ALGORITHM algorithm, const std::wstring& outputCarFileName);
 	bool CheckDoubled(const std::wstring& filePath) const;
 	void ClearItems();
 	void DeleteItems();
 	BOOL PreTranslateMessage(MSG* msg);
+	LRESULT OnFailCompress(WPARAM wParam, LPARAM lParam);
 
 	CListCtrl m_itemList;
 	CComboBox m_comboAlgorithms;

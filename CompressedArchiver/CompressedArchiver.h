@@ -48,6 +48,7 @@ public:
 	static const char CAR_TERMINATOR = 0;
 
 	static const UINT APP_MESSAGE_BROKEN_PACKAGE = WM_APP + 1;
+	static const UINT APP_MESSAGE_FAILURE_COMPRESS = APP_MESSAGE_BROKEN_PACKAGE + 1;
 
 public:
 	CCompressedArchiverApp();

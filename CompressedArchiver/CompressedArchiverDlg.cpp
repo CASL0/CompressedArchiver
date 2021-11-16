@@ -34,7 +34,7 @@ void CCompressedArchiverDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CCompressedArchiverDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_MESSAGE(CCompressedArchiverApp::APP_MESSAGE_BROKEN_PACKAGE, CCompressedArchiverDlg::onDetectBroken)
+	ON_MESSAGE(CCompressedArchiverApp::APP_MESSAGE_BROKEN_PACKAGE, CCompressedArchiverDlg::OnDetectBroken)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB_FUNCTIONS, &CCompressedArchiverDlg::OnTcnSelchangeTabFunctions)
 END_MESSAGE_MAP()
 
@@ -121,7 +121,7 @@ HCURSOR CCompressedArchiverDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-LRESULT CCompressedArchiverDlg::onDetectBroken(WPARAM wParam, LPARAM lParam)
+LRESULT CCompressedArchiverDlg::OnDetectBroken(WPARAM wParam, LPARAM lParam)
 {
 	auto brokenPackage = reinterpret_cast<wchar_t*>(wParam);
 	if (brokenPackage)
