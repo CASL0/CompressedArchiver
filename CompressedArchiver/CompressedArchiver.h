@@ -59,6 +59,8 @@ public:
 	std::string Utf16ToUtf8(const std::wstring& src) const;
 	std::wstring Utf8ToUtf16(const std::string& src) const;
 	CFileTime Uint64ToFileTime(uint64_t fileTimeNumber) const;
+	void ShowErrorMessage(const std::wstring& message) const;
+	void ShowErrorMessage(UINT resourceId, DWORD errorCode) const;
 
 // オーバーライド
 public:

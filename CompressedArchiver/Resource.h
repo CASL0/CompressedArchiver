@@ -43,6 +43,7 @@
 #define IDS_WARN_BROKEN_PACKAGE         10021
 #define IDS_COMBO_ALGORITHM_LZ4         10022
 #define IDS_COMBO_ALGORITHM_ZSTD        10023
+#define IDS_ERROR_CREATE_ARCHIVE        10024
 
 // Next default values for new objects
 // 

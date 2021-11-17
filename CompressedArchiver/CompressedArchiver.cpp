@@ -360,3 +360,15 @@ CFileTime CCompressedArchiverApp::Uint64ToFileTime(uint64_t fileTimeNumber) cons
 	fileTime.dwHighDateTime = static_cast<DWORD>(fileTimeNumber);
 	return fileTime;
 }
+
+void CCompressedArchiverApp::ShowErrorMessage(const std::wstring& message) const
+{
+	(void)AfxMessageBox(message.c_str(), MB_ICONSTOP | MB_SETFOREGROUND);
+}
+
+void CCompressedArchiverApp::ShowErrorMessage(UINT resourceId, DWORD errorCode) const
+{
+	CString errorMessage;
+	errorMessage.Format(resourceId, errorCode, FormatErrorMessage(errorCode).c_str());
+	ShowErrorMessage(errorMessage.GetString());
+}

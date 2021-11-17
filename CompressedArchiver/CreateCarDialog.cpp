@@ -274,7 +274,7 @@ LRESULT CreateCarDialog::OnFailCompress(WPARAM wParam, LPARAM lParam)
 	auto errorCode = static_cast<DWORD>(wParam);
 	auto errorMessage = theApp.FormatErrorMessage(errorCode);
 	OutputDebugString(errorMessage.c_str());
-	(void)AfxMessageBox(errorMessage.c_str(), MB_ICONSTOP);
+	theApp.ShowErrorMessage(IDS_ERROR_CREATE_ARCHIVE, errorCode);
 
 	return ERROR_SUCCESS;
 }
