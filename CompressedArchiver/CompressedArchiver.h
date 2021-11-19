@@ -61,6 +61,7 @@ public:
 	CFileTime Uint64ToFileTime(uint64_t fileTimeNumber) const;
 	void ShowErrorMessage(const std::wstring& message) const;
 	void ShowErrorMessage(UINT resourceId, DWORD errorCode) const;
+	void ShowErrorMessage(UINT resourceId) const;
 
 // オーバーライド
 public:

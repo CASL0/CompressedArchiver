@@ -283,6 +283,12 @@ void CreateCarDialog::OnBnClickedButtonCreate()
 {
 	std::list<std::wstring> fileNameList;
 	auto numItems = m_itemList.GetItemCount();
+	if (numItems == 0)
+	{
+		theApp.ShowErrorMessage(IDS_ERROR_NO_ITEMS_TO_CREATE);
+		return;
+	}
+
 	for (auto i = 0; i < numItems; i++)
 	{
 		auto fileName = m_itemList.GetItemText(i, 0);

@@ -372,3 +372,10 @@ void CCompressedArchiverApp::ShowErrorMessage(UINT resourceId, DWORD errorCode) 
 	errorMessage.Format(resourceId, errorCode, FormatErrorMessage(errorCode).c_str());
 	ShowErrorMessage(errorMessage.GetString());
 }
+
+void CCompressedArchiverApp::ShowErrorMessage(UINT resourceId) const
+{
+	CString errorMessage;
+	(void)errorMessage.LoadStringW(IDS_ERROR_NO_ITEMS_TO_CREATE);
+	ShowErrorMessage(errorMessage.GetString());
+}

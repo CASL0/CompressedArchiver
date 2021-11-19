@@ -44,6 +44,7 @@
 #define IDS_COMBO_ALGORITHM_LZ4         10022
 #define IDS_COMBO_ALGORITHM_ZSTD        10023
 #define IDS_ERROR_CREATE_ARCHIVE        10024
+#define IDS_ERROR_NO_ITEMS_TO_CREATE    10025
 
 // Next default values for new objects
 // 
