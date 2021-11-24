@@ -119,7 +119,7 @@ DWORD CCompressedArchiverApp::Archive(const std::list<std::wstring>& fileList, C
 DWORD CCompressedArchiverApp::GetHeaderList(const std::wstring& inputCarFileName, std::list<CarHeader>& headerList) const
 {
 	CFile inputCarFile;
-	if (CFileException ex; !inputCarFile.Open(inputCarFileName.c_str(), CFile::modeRead | CFile::typeBinary | CFile::shareDenyWrite))
+	if (CFileException ex; !inputCarFile.Open(inputCarFileName.c_str(), CFile::modeRead | CFile::typeBinary | CFile::shareDenyWrite, &ex))
 	{
 		OutputDebugString(L"File open error: ");
 		OutputDebugString(ex.m_strFileName);
