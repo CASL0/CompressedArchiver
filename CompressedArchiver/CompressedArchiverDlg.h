@@ -40,5 +40,7 @@ private:
 	CreateCarDialog m_createCarDlg{ &m_tabCtrl };
 	OpenCarDialog m_openCarDlg{ &m_tabCtrl };
 public:
+	BOOL PreTranslateMessage(MSG* msg);
 	afx_msg void OnTcnSelchangeTabFunctions(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnIdok();
 };

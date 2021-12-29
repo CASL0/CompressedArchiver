@@ -30,8 +30,6 @@ CCompressedArchiverApp::CCompressedArchiverApp()
 	// 再起動マネージャーをサポートします
 	m_dwRestartManagerSupportFlags = AFX_RESTART_MANAGER_SUPPORT_RESTART;
 
-	// TODO: この位置に構築用コードを追加してください。
-	// ここに InitInstance 中の重要な初期化処理をすべて記述してください。
 }
 
 
@@ -301,7 +299,7 @@ bool CCompressedArchiverApp::ReadFileHeader(CFile& inputCarFile, CarHeader* head
 	if (checkSum != tmpHeader.headerCheckSum)
 	{
 		OutputDebugString(L"不一致\n");
-		PostMessage(m_pMainWnd->m_hWnd, APP_MESSAGE_BROKEN_PACKAGE, reinterpret_cast<WPARAM>(Utf8ToUtf16(tmpHeader.fileName).c_str()), 0);
+		PostMessage(m_pMainWnd->m_hWnd, APP_MESSAGE_BROKEN_PACKAGE, 0, 0);
 	}
 
 	(void)inputCarFile.Seek(tmpHeader.compressedSize, CFile::current);

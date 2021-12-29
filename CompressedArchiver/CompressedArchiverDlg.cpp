@@ -14,11 +14,6 @@
 #define new DEBUG_NEW
 #endif
 
-
-// CCompressedArchiverDlg ダイアログ
-
-
-
 CCompressedArchiverDlg::CCompressedArchiverDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_COMPRESSEDARCHIVER_DIALOG, pParent)
 {
@@ -36,6 +31,7 @@ BEGIN_MESSAGE_MAP(CCompressedArchiverDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_MESSAGE(CCompressedArchiverApp::APP_MESSAGE_BROKEN_PACKAGE, CCompressedArchiverDlg::OnDetectBroken)
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB_FUNCTIONS, &CCompressedArchiverDlg::OnTcnSelchangeTabFunctions)
+	ON_COMMAND(IDOK, &CCompressedArchiverDlg::OnIdok)
 END_MESSAGE_MAP()
 
 
@@ -123,15 +119,24 @@ HCURSOR CCompressedArchiverDlg::OnQueryDragIcon()
 
 LRESULT CCompressedArchiverDlg::OnDetectBroken(WPARAM wParam, LPARAM lParam)
 {
-	auto brokenPackage = reinterpret_cast<wchar_t*>(wParam);
-	if (brokenPackage)
-	{
-		OutputDebugString(L"ファイルが破損しています：");
-		OutputDebugString(brokenPackage);
-		OutputDebugString(L"\n");
-	}
+	OutputDebugString(L"ファイルが破損しています\n");
 	(void)AfxMessageBox(IDS_WARN_BROKEN_PACKAGE);
 	return ERROR_SUCCESS;
+}
+
+BOOL CCompressedArchiverDlg::PreTranslateMessage(MSG* msg)
+{
+	if (WM_KEYDOWN == msg->message)
+	{
+		switch (msg->wParam)
+		{
+		case VK_ESCAPE:
+			return FALSE;
+		default:
+			break;
+		}
+	}
+	return CDialogEx::PreTranslateMessage(msg);
 }
 
 void CCompressedArchiverDlg::OnTcnSelchangeTabFunctions(NMHDR* pNMHDR, LRESULT* pResult)
@@ -147,4 +152,10 @@ void CCompressedArchiverDlg::OnTcnSelchangeTabFunctions(NMHDR* pNMHDR, LRESULT* 
 		(void)m_createCarDlg.ShowWindow(SW_HIDE);
 		(void)m_openCarDlg.ShowWindow(SW_SHOW);
 	}
+}
+
+
+void CCompressedArchiverDlg::OnIdok()
+{
+	//Enterで終了しないための空実装
 }
